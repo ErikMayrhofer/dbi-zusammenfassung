@@ -1,1 +1,144 @@
 \chapter{Normalisierung}\label{cha:ormalisierung}
+
+Bei der Normalisierung werden Relationsschemata verfeinert. Durch die Normalisierung sollen Redundanzen verhindert werden, und es werden Leistungs- und Speichereffizienz angestrebt.
+
+\section{Anomalien}
+
+Zu Beginn muss geklärt werden welche Folgen redundant gespeicherte Daten haben und wieso normalisiert werden soll.
+Schlecht entworfene Relationsschemata führen zu Anomalien.
+Redundanzen entstehen, wenn verschiedene Entitytypen in einer Relation vermischt sind.
+Anomalien sind darauf zurückzuführen, dass nicht zusammenpassende Informationen in einer Relation gebündelt wurden.
+
+\subsection{Update-Anomalien}
+
+Wird eine redundant gespeicherte Information verändert, kann es passieren dass Einträge übersehen werden, und so manche Einträge unverändert bleiben.
+
+Selbst wenn man garantieren kann, dass alle Einträge gleichzeitig ändern kann hat man folgende Nachteile:
+
+\begin{itemize}
+    \item erhöhter Speicherbedarf
+    \item Leistungseinbußen bei Änderungen
+\end{itemize}
+
+\subsection{Einfüge-Anomalien}
+
+Sind mehrere Entitytypen in einer Relation vermischt, treten Probleme auf, wenn man neue Informationen, die nur zu einem Entitytyp gehören, einfügt.
+
+Man müsste die Attribute der anderen Entitytypen mit NULL-Werten besetzen.
+
+\subsection{Löschanomalien}
+
+Sind mehrere Entitytypen in einer Relation vermischt, treten Probleme auf, wenn man Informationen, die nur zu einem Entitytypen gehören, löschen will.
+
+Es kann zu einem unbeabsichtigten Verlust der anderen Entitytypen kommen.
+
+Dies wäre nur zu vermeiden, wenn man die Werte der zu löschenden Attribute mit NULL-Werten besetzt. Sind allerdings die nicht zu löschenden Informationen redundant gespeichert, wäre das nicht nötig.
+
+\section{Funktionale Abhängigkeiten}
+
+Eine funktionale Abhängigkeit ist, wenn die Werte einer Menge von Attributen die Werte einer anderen Menge von Attributen bestimmt.
+
+So ist zum Beispiel das Attribut Sozialversicherungsnummer ein Attribut, welches die Attribute Name und Alter in der Tabelle Person bestimmt.
+
+\textbf{Funktionale Abhängigkeiten sind Konsistenzbedingungen, die in jedem gültigen Datenbankzustand eingehalten werden müssen.}
+
+\subsection{Schlüssel}
+
+Funktionale Abhängigkeiten sind eine Verallgemeinerung des Schlüsselbegriffs.
+
+\subsubsection{Superschlüssel}
+
+Ein Schlüssel ist ein Superschlüssel, wenn die Werte aller anderen Attribute der Relation von ihm abhängen. Die Menge der Schlüsselattribute muss nicht minimal klein sein.
+
+\subsubsection{Volle Funktionale Abhängigkeit}
+
+Ein Schlüssel ist eine volle funktionale Abhängigkeit, wenn kein Attribut mehr aus der Schlüsselmenge entfernt werden kann, ohne den Schlüssel zu zerstören.
+
+\section{Zerlegung von Relationen}
+
+Um einen schlechten Entwurf zu verbessern, werden bei der Normalisierung Relationen aufgespalten.
+
+\subsection{Korrektheitskriterien}
+
+Bei der Zerlegung von Relation sollten folgende Kriterien eingehalten werden:
+\begin{itemize}
+    \item Verlustlosigkeit: Die Daten der ursprünglichen Relationen müssen aus den Daten der neuen Relationen rekonstruierbar sein
+    \item Abhängigkeitserhaltung: Die auf die ursprüngliche Relation geltenden funktionalen Abhängigkeiten müssen auf die neuen Schemata übertragbar sein
+\end{itemize}
+
+\subsubsection{Verlustlosigkeit}
+
+Eine Zerlegung ist verlustlos, wenn alle Information durch eine Join wieder rekonstruierbar sind.
+
+Eine Zerlegung ist nicht verlustlos, falls durch den Join der neuen Relationen Tupel entstehen, die in der ursprünglichen Relation nicht vorhanden waren.
+
+\subsubsection{Abhängigkeitserhaltung}
+
+Die Überprüfung aller Abhängigkeiten muss erfolgen können, ohne dass Joins notwendig sind.
+
+\section{Normalformen}
+
+\subsection{Erste Normalform}
+
+Die erste Normalform verlangt, dass alle Attribute einen atomaren Wertebereich haben.
+
+Es sind:
+\begin{itemize}
+    \item zusammengesetzte
+    \item mengenwertige
+    \item relationenwertige
+\end{itemize}
+Attributdomänen ( = Wertebereich) sind nicht zulässig.
+
+\subsection{Zweite Normalform}
+
+Attribute, die in keinem Schlüssel vorkommen, müssen von \textit{jedem} Kandidatenschlüssel \textbf{voll funktional} abhängen.
+
+\subsubsection{Eine Relation in zweite Normalform bringen}
+
+Relation in mehrere Teilrelationen zerlegen, die beide die zweite Normalform erfüllen
+
+\subsection{Dritte Normalform}
+
+Die dritte Normalform verlangt, dass für jede funktionale Abhängigkeit einer Relation mindestens eine von 3 Bedingungen gilt:
+\begin{itemize}
+    \item das Abhängige Attribut ist im Schlüssel enthalten
+    \item das Abhängige Attribut ist Teil eines anderen Schlüssels
+    \item die funktionale Abhängigkeit ist ein Superschlüssel der Relation, das heisst, er bestimmt alle Attributwerte der Relation
+\end{itemize}
+
+Die dritte Normalform ist verletzt, wenn ein Attribut nicht von jedem Kandidatenschlüssel abhängt und die Relation keinen Superschlüssel hat.
+
+\subsubsection{Eine Relation in dritte Normalform bringen}
+
+Relationen aufteilen, sodass eine der drei oberen Bedingungen gilt.
+
+\subsection{Boyce-Codd Normalform}
+
+die Schwierigkeit beim Finden einer Zerlegung die in BCNF ist, liegt dabei eine Zerlegung zu finden welche Abhängigkeitserhaltend ist.
+
+Eine Relation ist in BCNF, wenn jede Abhängigkeit entweder trivial ist, oder die Abhängigkeit ein Superschlüssel der Relation.
+
+\subsection{Vierte Normalform}
+
+Die 4. Normalform ist nicht mehr Abhängigkeitserhaltend.
+
+\subsection{Arten der Funktionalen Abhängigkeit}
+
+\begin{itemize}
+    \item Triviale FA: Die abhängigen Attribute sind im Schlüssel enthalten
+    \item Volle FA: Die Menge an Attributen im Schlüssel ist minimal
+    \item Superschlüssel: Der Schlüssel bestimmt alle Attribute einer Relation
+    \item Transitive Abhängigkeit: Eine transitive Abhängigkeit liegt dann vor, wenn Y von X funktional abhängig und Z von Y, so ist Z von X funktional abhängig. Das heißt, dass Nichtschlüsselattribute funktional abhängig zu anderen Nichtschlüsselattributen sind.
+\end{itemize}
+
+\section{Nachteile der Normalisierung}
+
+Obwohl die Normalisierung Vorteile wie die Konsistenz der Daten, die effiziente Organisation der Daten usw., kann sie jedoch auch einige Nachteile mit sich bringen.
+
+So speichert eine vollständig normalisierte Datenbank zusammengehörige Daten nicht in einer, sondern in mehreren verschiedenen, miteinander verknüpften Tabellen.
+
+Für Anwender ist das Datenbankschema auf den ersten Blick unübersichtlicher. Um die zusammengehörenden Informationen zu erhalten, ist die Zusammenführung der Daten aus den verschiedenen Tabellen notwendig.
+Die Datenabfragen arbeiten mit Joins und sammeln die gewünschten Informationen aus den einzelnen Tabellen. Komplexe und umfangreiche Joins führen zu einer starken Belastung des Datenbanksystems.
+
+Ein weiterer Nachteil ist, dass die Normalisierung einen erheblichen Aufwand darstellen kann. Er steigt zusätzlich, wenn die Normalisierung nicht schon beim Entwurf des relationalen Datenbankschemas stattfindet, sondern bei einer bereits mit Daten gefüllten Datenbank.
