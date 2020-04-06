@@ -1,1 +1,139 @@
 \chapter{Verteilte Datenbanken}\label{cha:verteiltedb}
+
+\section{Grundlagen}
+
+\textbf{Motivation: } Geographisch verteilte Verwaltung von Firmen.
+
+\subsection{Beispiel}
+
+Bank mit mehreren Filialen:
+\begin{itemize}
+    \item jede Filiale hat eine lokale Kundendatenbank
+    \item andere Filialen oder die Zentrale sollten Zugriff auf die lokale DB haben
+\end{itemize}
+
+\section{Terminologie}
+
+Verteilte Datenbanken bestehen aus einer Sammlung von \text{Informationseinheiten}. Diese auf mehreren Rechnern verteilt. Die Rechner sind über ein Kommunikationsnetz verbunden.
+
+\section{Entwurf}
+
+\subsection{Globales Schema}
+
+Das Globale Schema ist der Ausgangspunkt des Entwurfs für ein verteiltes System. Es ist ein \textbf{relationales Schema} eines zentralen Entwurfs.
+
+\subsection{Die Aufgaben eines Verteilten DBMS}
+
+\begin{itemize}
+    \item Die Daten fragmentieren = ein Fragmentierungsschema erstellen
+    \item Ein Zuordnungsschema für die Fragmente erstellen
+\end{itemize}
+
+\section{Fragmentierungsschema}
+
+Das zentrale Schema wird in Fragmente zerlegt. Im zentralen Schema gibt es zusammengehörende Information, (= Relationen, Tabellen), und diese werden in Untereinheiten (= \textbf{Fragmente}) aufgeteilt, wobei jedes Fragment Informationen enthält, welche in keinem anderen Fragment enthalten sind. Man spricht von \textbf{Disjunktheit}.
+
+Die Zerlegung in Fragmente erfolgt anhand vom Zugriffsverhalten. Daten die oft gemeinsam abgefragt werden, werden in einem Fragment zusammengefasst. 
+
+\section{Zuordnungsschema}
+
+Sobald das Fragmentierungsschema fertig ist, werden die Fragmente den Stationen des VDBMS zugeteilt. Man spricht von der \textbf{Allokation.}
+
+\subsection{Arten der Zuordnung}
+
+Man kann Fragmente auch mehreren Stationen zuweisen, dann sind sie mehrfach, redundant gespeichert.
+
+\begin{itemize}
+    \item Redundanzfrei
+    \item Redundant = Allokation mit Replikation
+\end{itemize}
+
+\section{Fragmentierungs-Arten}
+
+Es gibt 3 Arten wie man die Daten Fragmentieren kann. Vorerst muss geklärt werden welche Anforderungen eine Fragmentierung hat, damit die Daten wieder vollständig hergestellt werden können.
+
+\subsection{Korrektheitsanforderungen an die Fragmentierung}
+
+\begin{enumerate}
+    \item Rekonstruierbarkeit: Die ursprünglichen Daten lassen sich vollständig wiederherstellen
+    \item Vollständigkeit: Jeder Datensatz (= Datum) wird einem Fragment zugeordnet
+    \item Disjunktheit: Die Fragmente überlappen sich nicht. Ein Datum ist nur an einer Station gespeichert
+\end{enumerate}
+
+\subsection{Horizontale Fragmentierung}
+
+Eine Tabelle wird nach Zeilen aufgeteilt (= eine Relation wird nach Tupel aufgeteilt). Um die Zuordnung zu bestimmen, braucht man eine Bedingung, welche für die Daten entweder gilt oder nicht.
+
+\subsection{Vertikale Fragmentierung}
+
+Eine Tabelle wird nach Spalten aufgeteilt (= Eine Relation wird nach Attributen aufgeteilt). Die Attribute weisen ähnliche Zugriffsmuster auf. Es ist bei beliebiger Fragmentierung allerdings die Rekonstruierbarkeit nicht gewährleistet. Man nehme als Beispiel die Tabelle Person mit den Attributen SVN (= Schlüssel), Name und Alter. Teilt man diese Tabelle vertikal auf in ein Fragment SVN, ein Fragment Name, und ein Fragment Alter, so weiss man nicht mehr welcher Person eine Zeile im Fragment Name oder Alter gehört.
+
+\subsubsection{Rekonstruierbarkeit gewährleisten}
+
+\begin{enumerate}
+    \item Jedem Fragment den Primärschlüssel zuweisen
+    \item Jedem Fragment ein Surrogat zuweisen
+\end{enumerate}
+
+Bei der Zuweisung des PK ist allerdings die Disjunktheit verletzt, denn der PK ist mehrmals gespeichert.
+
+\subsection{Kombinierte Fragmentierung}
+
+Man kann die Fragmentierungen auch kombinieren.
+
+\begin{itemize}
+    \item Zuerst horizontal dann vertikal
+    \item Zuerst vertikal dann horizontal
+\end{itemize}
+
+\section{Transparenz}
+
+Die Transparenz ist der Grad von Unabhängigkeit den das DBMS dem Benutzer beim Zugriff auf die verteilten Daten vermittelt.
+Idealerweise muss der Nutzer nicht wissen, dass die Daten verteilt gespeichert werden.
+
+\subsection{Fragmentierungstransparenz}
+
+Der Nutzer merkt nicht, dass die Daten verteilt ist. Seine Interaktionen sind wie bei einem zentralen Schema.
+
+\subsection{Allokationstransparenz}
+
+Die Nutzer müssen nur wissen, wie die Daten fragmentiert sind, allerdings nicht wo die Daten gespeichert sind.
+
+\subsection{Lokale-Schema-Transparenz}
+
+Die Nutzer brauchen Kenntnis über die Fragmentierung und den Aufenthaltsort der Daten.
+
+\section{Schwierigkeiten im VDBMS}
+
+\subsection{Anfrageübersetzung und Optimierung}
+
+Die Aufgabe des Anfrageübersetzers ist es, einen Anfrageauswertungsplan auf den Fragmenten zu generieren, und das möglichst effizient.
+
+\subsection{Transaktionskontrolle}
+
+Transaktionen können sich über mehrere Stationen verteilen. 
+
+\subsubsection{EOT}
+
+So wie lokale Transaktion müssen auch globale Transaktionen atomar behandelt werden. Entweder alle Stationen committen, oder keine.
+
+Dadurch ist das EOT eine besondere Schwierigkeit.
+
+\subsection{Mehrbenutzerfähigkeit}
+
+Es reicht nicht das Transaktionen lokal serialisierbar sind. Es können Trotzdem global Deadlocks auftreten.
+
+\subsubsection{Deadlocks}
+
+Die Deadlockerkennung mit dezentralisierter Sperrverwaltung gestaltet sich als schwierig.
+
+\section{SQL Database Link}
+
+\begin{lstlisting}
+CREATE DATABASE LINK link_name
+CONNECT TO username IDENTIFIED BY 'password'
+USING '(DESCRIPTION =
+                    (ADDRESS = (PROTOCOL = TCP)(HOST = ip-Adresse)(PORT = 1522))
+                    (CONNECT_DATA = (SERVER = DEDICATED)(SERVICE_NAME = z.b.:xe))
+        )';
+\end{lstlisting}
