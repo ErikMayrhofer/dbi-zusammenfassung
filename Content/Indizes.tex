@@ -1,1 +1,176 @@
 \chapter{Indizes}\label{cha:indices}
+
+\section{Allgemeines}
+
+\subsection{Abbildung von Relationen im Hauptspeicher}
+
+Eine Relation wird in einer Datei abgebildet, dabei werden zusätzlich zu den Tupeln \textbf{Datensatztabellen}, die Verweise zu den Tupeln verwalten, gespeichert. Um die Tupel zu referenzieren verwendet man einen \textit{Tupel-Identifikator}, \textbf{TID}, auch \textbf{ROWID}.
+
+\subsection{Indexstrukturen}
+
+Indizes sind Teil des physischen Entwurfs, sie dienen dazu Speicherzugriffe zu beschleunigen.
+
+Meist werden bei Datenbankabfragen nur einige, nicht alle, Tupel einer Relation benötigt, man muss die Datensätze also suchen.
+
+Sind die Daten ohne Zusatzinformation gespeichert, so muss man ganze Dateien durchsuchen bis man die Tupel, die die Suchkritierien erfüllen, findet.
+
+Suchkriterien der Indexe werden Schlüssel genannt.
+
+\textbf{Indexstrukturen geben die passenden Datensätze zu einem Suchkriterium an}.
+
+\subsection{Nachteile von Indizes}
+
+\begin{itemize}
+    \item Extra Wartungsaufwand
+    \item erhöhter Speicherbedarf
+    \item \lstinline{INSERT}, \lstinline{UPDATE}, \lstinline{DELETE} Operationen können erheblich langsamer werden
+\end{itemize}
+
+\subsection{Verwendung}
+
+\begin{itemize}
+    \item Primary Keys und Unique Keys sind automatisch indiziert
+    \item Foreign-Key Columns sollten indiziert werden (Join-Columns)
+    \item Columns die in \lstinline{WHERE} / \lstinline{GROUP BY} / \lstinline{ORDER BY} häufig gebraucht werden sollten indiziert werden
+    \item Beschleunigung häufig erst ab mehreren 100 Datensätzen
+    \item Traditioneller Index mit B*-Baum nicht gut für Spalten mit wenig verschiedenen Werten (schlecht: Geschlecht, gut: Telefonnummer)
+    \item Spalte sollte indiziert werden, wenn die Queries weniger als 5\% der Datensätze zurückliefern
+    \item Tabellen, auf die gleich oft eine Abfrage und \lstinline{INSERT}, \lstinline{UPDATE}, \lstinline{DELETE} abgesetzt wird, sollte nicht indiziert werden
+\end{itemize}
+
+\section{Unterscheidungen}
+
+\subsection{Primärindex}
+
+Ein Primärindex legt die physische Anordnung der Daten fest. Es kann daher nur einen Primärindex geben. Meist wird der Primärschlüssel vom Primärindex indiziert.
+
+\subsection{Sekundärindex}
+
+Die Indexstruktur des Sekundärindex verweist mittels der TID / ROWID auf die physisch gespeicherten Datensätze. Ein Sekundärindex kann ohne Einfluss auf die physischen Daten erstellt und gelöscht werden.
+
+\subsection{Concatenated Index}
+
+Ein Index wird für 2 oder mehrere Spalten angelegt.
+
+Sollte verwendet werden, wenn die indizierten Spalten in der (beim Statement angegebenen) Reihenfolge häufig mit AND und OR in WHERE Klausel vorkommen. Reihenfolge beim Index anlegen in diesem Fall äußerst wichtig, ansonsten wird der Index nicht verwendet!
+
+\begin{itemize}
+    \item Unique Index: Jede Wertkombination in den indizierten Spalten kommt max. 1x vor
+    \item Non-unique Index: Wertkombinationen können öfter vorkommen
+\end{itemize}
+
+\subsection{Ascending / Descending Index}
+
+Einzelne Indexspalten können auf- und absteigend sortiert angelegt werden. Besonders nützlich falls sortierte Ausgabe erforderlich ist kein zusätzliches Sortieren mehr notwendig.
+
+\subsection{Arten von Indizes in Oracle}
+
+\begin{itemize}
+    \item B-Tree Index
+    \item Bitmap Index
+    \item Bitmap-Join Index
+    \item Funktionsbasierter Index
+\end{itemize}
+
+\subsection{B-Tree Index}
+
+Der B-Tree Index kann weiter unterteilt werden in folgende Arten:
+
+\subsubsection{Reverse-Key-Index}
+
+Der Schlüssel wird reversed gespeichert.
+
+\subsubsection{Index-Organized Table}
+
+Oracle-Way of saying dass Index ein Primärindex ist.
+
+\subsubsection{Descending Index}
+
+Index wird absteigend gehalten.
+
+\subsubsection{B-Tree-Cluster Index}
+
+Index zeigt nicht auf TID sondern auf Cluster der Datensätze enthält.
+
+\subsection{Bitmap Index}
+
+Mit einer Hashfunktion wird ein Schlüssel auf einen Behälter (Bucket) abgebildet, der den zugehörigen Datensatz (oder TID) aufnehmen soll. Die Bitmap wird aus dem Schlüssel errechnet. Ein Bucket hat platz für eine bestimmte Anzahl von Datensätzen, es können also mehrere Schlüssel dem gleichen Bucket zugewiesen werden.
+
+Die Verwendung eines Bitmap Indexes macht Sinn bei wenig verschiedenen Werten (Geschlecht, Noten).
+
+\subsection{Bitmap-Join Index}
+
+Ist ein Bitmap Index um mehrere Tabellen zu joinen.
+
+\subsection{Funktionsbasierter Index}
+
+Ist auf B-Tree und Bitmap Index anwendbar.
+Der Funktionsbasierte Index enthält Columns die durch Funktionen, wie z.B. \lstinline{UPPER} modifiziert gesucht werden.
+
+\section{Zugriffsarten}
+
+\subsection{Index Scan}
+
+Zugriff über indizierte Tabellenspalte (Anzahl I/O Operationen = Höhe des B-Baums) Im Blattknoten ROWID
+
+\subsection{Full Index Scan}
+
+gesamter Index wird verarbeitet – verfügbar, wenn in WHERE auf Indexspalte referenziert wird. Erfordert keine Sortierung, Daten werden über Index ausgegeben.
+ Key-Value Paare des Indexes sind aber sortiert.
+
+ \subsection{Fast Full Index Scan}
+
+ Zugriff auf Indexdaten, nicht Tabellendaten. Möglich, wenn alle Query-Spalten im Index enthalten sind.
+
+ \subsection{Index Range Scan}
+
+ nur die Blätter des B-Baums betroffen, werden vor- oder rückwärts gelesen. (z.B. alle Abteilungen mit einer Nr. zwischen 20 und 40)
+
+ \subsection{Index Unique Scan}
+
+ Wenn in WHERE ein Gleichheitsoperator auf Spalten referenziert, wo alle unique- indiziert sind.
+
+ \subsection{Index Skip Scan}
+
+ Bei Concatenated Indices, wenn die führende (= 1.) Spalte wenig verschiedene Werte hat und die nicht führenden (!= 1) Spalten viele verschiedene Werte. Verwendet wird Index Skip Scan dann, wenn führende Spalte nicht in WHERE enthalten.
+
+ \subsection{Wann ein Index wirklich verwendet wird}
+
+ Die endgültige Entscheidung, ob der Index verwendet wird, liegt beim Optimizer.
+Es kann aber im Query angegeben werden, dass ein Index nicht verwendet werden soll bzw. eine andere Zugriffsart definieren.
+
+\subsubsection{Verwendung des Index überprüfen}
+
+\begin{lstlisting}
+SELECT table_name, index_name, monitoring, used FROM v$object_usage
+\end{lstlisting}
+
+\lstinline{Used} sagt hierbei mit YES/NO aus, ob der Index verwendet wurde.
+
+\section{Indexstufen}
+
+\subsection{Einstufiger Index}
+
+In EINER Indexdate besteht das Key-Value-Pair aus dem Primary Key und dem Index.
+
+\subsection{Mehrstufiger Index}
+
+Mehr als eine Indexdatei. Die Indexdatei der ersten Stufe ist gleich dem einstufigem Index. Bei allen anderen Dateien der Stufen bestehen die Key-Value-Pairs aus dem Primary Key und dem Index der Indexdatei eine Stufe niedriger.
+
+\section{SQL Syntax}
+
+\begin{lstlisting}
+CREATE [ UNIQUE ] INDEX indexname ON tablename (columns,...)
+\end{lstlisting}
+
+\subsection{Clustered Index}
+
+\begin{lstlisting}
+CREATE [ UNIQUE ] CLUSTERED INDEX index_name ON table_name;
+\end{lstlisting}
+
+\subsection{Drop Index}
+
+\begin{lstlisting}
+DROP INDEX index_name;  
+\end{lstlisting}
