@@ -1,34 +1,49 @@
 \chapter{Modellierung}\label{cha:modellierung}
 
-\section{Datenmodellierung}
+\section{Entwurfsmethodik}
 
-Modellieren ist der Weg von der realen Welt bis zum Datenmodell. Ein Datenmodell verdeutlicht die Beziehungen zwischen Daten. Ergebnis des Modellierungsprozesses ist ein sogenanntes Datenschema, das zumeist grafisch visualisiert wird.
-Im Hinblick auf die Datenmodellierung eignen sich folgende Ansätze:
+Modellieren ist der Weg von der realen Welt bis zum Datenmodell.
+Der Entwurf eines Datenmodells geschieht in mehreren Schritten:
+\begin{enumerate}
+    \item Anforderungsanalyse
+    \item Konzeptionelles Modell erstellen
+    \item Implementierung überlegen
+    \item Normalisieren
+\end{enumerate}
 
-\paragraph{Konzeptuelles Datenmodell}
-Beschreibt die globale logische Struktur aller Daten Implementierungs-unabhängig und stellt diese in einer systematischen Form dar.
+\subsection{Abstraktionsebenen}
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.75\textwidth]{Content/images/modellierung/konzeptionell.png}
-    \caption{Konzeptuelles Datenmodell}
-    \label{fig:modellierung:konzeptuell}
- \end{figure}
+\subsubsection{Konzeptionelle Ebene}
 
- \paragraph{Logisches Datenmodell}
- Auf die spätere Implementierung ausgerichtetes Datenmodell, das die Daten für den späteren Einsatz bereits vorstrukturiert.
+In der konzeptionellen Ebene erstellt man ein konzeptionelles Modell. Meist wird ein Entity-Relationship Modell verwendet. Hierbei werden Gegenstände zu Gegenstandsmengen abstrahiert, Beziehungen zu Beziehungstypen abstrahiert, und den Gegenstandsmengen und Beziehungstypen werden Attribute zugeordnet.
+
+Das konzeptionelle Modell ist Implementierungs-unabhängig.
+
+\subsubsection{Implementationsebene}
+
+Die Datenbankanwendung wird im DBMS nach dem konzeptionellen Modell modelliert. Hier entsteht ein relationales Modell. 
+
+\subsubsection{Physische Ebene}
+
+Basiert auf der Grundlage des logischen Datenmodells. Im physischen Datenmodell wird besonders auf Effizienz der SQL-Abfragen geachtet, beispielsweise durch den Entwurf von Indexstrukturen.
 
  \begin{figure}[H]
     \centering
-    \includegraphics[width=.75\textwidth]{Content/images/modellierung/logisch.png}
-    \caption{Logisches Datenmodell}
-    \label{fig:modellierung:logisch}
- \end{figure}
-
- \paragraph{Physisches Datenmodell}
-Basiert auf der Grundlage des logischen Datenmodells. Im physischen Datenmodell wird besonders auf Effizienz der SQL-Abfragen geachtet, beispielsweise durch den Entwurf von Indexstrukturen.
-
-Aufgabe der Datenmodellierung ist es, bei der Konzeption eines Informationssystems dessen \emph{Objekte mittels Attribute und Beziehungen gemäß den Anforderungen zu strukturieren} und diese Struktur formal zu dokumentieren.
+    \subfloat[Konzeptuelles Datenmodell]{
+        {
+            \includegraphics[width=.35\textwidth]{Content/images/modellierung/konzeptionell.png}
+            \label{fig:modellierung:konzeptuell}
+        }
+    }
+    \subfloat[Logisches Datenmodell]{
+        {
+            \includegraphics[width=.35\textwidth]{Content/images/modellierung/logisch.png}
+            \label{fig:modellierung:logisch}
+        }
+    }
+    \caption{Grafiken zu den Datenmodellen}
+    \label{fig:modellierung:models}
+\end{figure}
 
 \emph{Ziele: Redundanzfreie Datenspeicherung und hohe Datenkonsistenz.}
 Eine redundanzfreie Datenspeicherung liegt dann vor, wenn jede Information in einer Datenbank genau einmal vorkommt. Des Weiteren muss eine hohe Datenkonsistenz verfolgt werden, so dass Daten eindeutige Informationen darstellen.
@@ -37,44 +52,103 @@ Eine redundanzfreie Datenspeicherung liegt dann vor, wenn jede Information in ei
 
 Ein Modell ist ein \emph{vereinfachtes Abbild der Wirklichkeit.} Zur Beschreibung der Art und Weise, wie Daten in einer Datenbank gespeichert werden, gibt es verschiedene Datenmodelle. Einige dieser Modelle findet man auch in der betriebswirtschaftlichen Organisationslehre wieder.
 
+\subsection{Anforderungsanalyse}
+
+Die Anforderungsanalyse ist der erste Schritt von der zu modellierenden Welt (= Miniwelt) zum Datenmodell. Nötige Informationen der Miniwelt werden betrachtet, Bestandteile der Informationsstrukturanforderungen sind:
+\begin{itemize}
+    \item Objekte werden zu Objekttypen
+    \item Attribute werden Objekttypen zugeordnet
+    \item Beziehungen zwischen Objekten werden zu Beziehungstypen
+\end{itemize}
+
 \subsection{Hierarchisches Datenmodell}
 
-Das hierarchische Datenmodell kennen wir vom Dateisystem unserer Festplatte (Laufwerksbuchstabe, Ordner, Dateien). Dieses Modell wird auch „Baumstruktur“ genannt. Ganz links (oder oben) befindet sich die Wurzel (Root). Von ihr sind alle Objekte abhängig, die weitere abhängige Objekte haben können. In der betriebswirtschaftlichen Lehre ist es mit einer Stablinienorganisation vergleichbar. Das hierarchische Datenmodell war früher ein sehr gebräuchliches Modell, deshalb bildet es die Grundlage älterer Datenbanksysteme.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.75\textwidth]{Content/images/modellierung/stablinien.png}
+\begin{wrapfigure}{r}{0.35\textwidth}
+    \begin{center}
+        \includegraphics[width=.34\textwidth]{Content/images/modellierung/stablinien.png}
+    \end{center}
     \caption{Stablinienorganisation}
     \label{fig:modellierung:stablinien}
- \end{figure}
-
+\end{wrapfigure}
+Das hierarchische Datenmodell kennen wir vom Dateisystem unserer Festplatte (Laufwerksbuchstabe, Ordner, Dateien). Dieses Modell wird auch „Baumstruktur“ genannt. Ganz links (oder oben) befindet sich die Wurzel (Root). Von ihr sind alle Objekte abhängig, die weitere abhängige Objekte haben können. In der betriebswirtschaftlichen Lehre ist es mit einer Stablinienorganisation vergleichbar. Das hierarchische Datenmodell war früher ein sehr gebräuchliches Modell, deshalb bildet es die Grundlage älterer Datenbanksysteme.
  Durch die \emph{hierarchische Baumstruktur ist der lesende Zugriff extrem schnell.} Der Nachteil der baumstrukturierten Verweise liegt bei der Speicherung der Daten und deren Verknüpfungen, da die Verweise untereinander vorab ermittelt werden müssen. Die Verknüpfungen werden über Eltern-Kind-Beziehungen realisiert und in der Baumstruktur abgebildet. Der große Nachteil bei diesem Modell ist es, dass man nur eine Baumstruktur verwenden kann: Es ist also nicht möglich, zwei Baumstrukturen miteinander zu verknüpfen. \emph{Das hat zur Folge, dass dieses Modell sehr starr ist und wenig Freiheit für den Entwickler bietet. }
 
  \subsection{Netzwerk Datenmodell}
 
+ \begin{wrapfigure}{r}{0.36\textwidth}
+    \begin{center}
+        \includegraphics[width=.35\textwidth]{Content/images/modellierung/netzwerk.png}
+    \end{center}
+    \caption{Netzwerk Datenmodell}
+    \label{fig:modellierung:netzwerk}
+\end{wrapfigure}
 Definition: Datenmodell, mit dem Netzwerkstrukturen zwischen Datensätzen beschrieben werden können.
 Es dient als Grundlage vieler Datenbanksysteme. Die drei Datenbanksprachen DML, DDL und DCL werden angewandt. Durch das netzwerkartige Modell existieren meist unterschiedliche Suchwege, um einen bestimmten Datensatz zu ermitteln. Es ähnelt dem hierarchischen Datenbankmodell und kann einer Matrixorganisation gegenübergestellt werden. 
 Das Netzwerk Datenbankmodell besitzt keine strenge Hierarchie. Ein Datenfeld besteht aus einem Namen und einem Wert.
 Es sind m:n Beziehungen möglich, d.h. ein Datensatz kann mehrere Vorgänger haben. Des Weiteren können auch mehrere Datensätze an erster Stelle stehen. Der Vorteil dieses Modells ist, das es unterschiedliche Suchwege als Lösungsweg angibt, was natürlich auch zu Problemen führen kann, wenn der Entwickler genau einen Lösungsweg benutzen will. Auch die Übersichtlichkeit verringert sich, wenn das Modell ständig weiter wächst.
 
+ Heute wird das Netzwerkdatenbankmodell als eine Art Verallgemeinerung des hierarchischen Datenbankmodells gesehen.
+
+ \subsection{Entity-Relationship-Modell}
+
+Die Modellierung relationaler Datenbanken erfolgt mit dem von Peter Chen entwickelten Entity-Relationship-Modell. Bevor mittels SQL angefangen wird, Tabellen und Beziehungen anzulegen, wird zuerst geplant, wie die Datenbankstruktur funktionieren und aufgebaut werden soll. Der Einsatz von ER-Modellen ist in der Praxis ein gängiger Standard für die Datenmodellierung.
+Mithilfe des Entity-Relationship-Modells soll eine Typisierung von Objekten, ihrer relationalen Beziehungen untereinander und der zu überführenden Attribute, stattfinden.
+
+\subsubsection{Bestandteile des ERM}
+
+\begin{itemize}
+    \item \textbf{Entities (Gegenstände)}: Unterscheidbare Konzepte der Miniwelt
+    \item \textbf{Beziehung zwischen Entities}: Eine Verknüpfung / Zusammenhang zwischen Entitäten. Die Abstrahierung erfolgt analog zu Entities.
+    \item \textbf{Attribut:} Eine Eigenschaft, die im Kontext zu einer Entität steht.
+\end{itemize}
+
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.75\textwidth]{Content/images/modellierung/netzwerk.png}
-    \caption{Netzwerk Datenmodell}
-    \label{fig:modellierung:netzwerk}
- \end{figure}
+    \includegraphics[width=.5\textwidth]{Content/images/modellierung/erd.png}
+    \caption{UML Darstellung}
+    \label{fig:modellierung:erd}
+\end{figure}
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.3\textwidth]{Content/images/modellierung/erde.png}
+    \caption{Was ist was}
+    \label{fig:modellierung:erde}
+\end{figure}
 
- Heute wird das Netzwerkdatenbankmodell als eine Art Verallgemeinerung des hierarchischen Datenbankmodells gesehen.
+\paragraph{Schlüssel}
+
+ERM haben weiters Schlüssel. Schlüssel sind eine minimale Menge von Attributen, deren Werte das zugeordnete Entity innerhalb aller Entities seines Typs eindeutig identifizieren.
+
+\paragraph{Surrogatschlüssel / künstlicher Schlüssel}
+
+Der Surrogatschlüssel ist ein Attribut welches künstlich als Schlüssel eingebaut wird.
+
+\subsubsection{Beispiel}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.4\textwidth]{Content/images/modellierung/bsp.png}
+    \caption{Beispiel Darstellung}
+    \label{fig:modellierung:bsp}
+\end{figure}
+
+\paragraph{Erklärung:}
+Ein Mitarbeiter hat einen Namen. Ein Projekt hat einen Namen, ein Datum und ein Budget. Ein Mitarbeiter kann mehrere Projekte leiten, aber ein Projekt kann nur von einem Mitarbeiter geleitet werden. 
+Zur Wiederholung: Diese Notation nennt man Chen-Notation und ist ein gängiger Standard in der Praxis der Datenmodellierung.
 
  \subsection{Relationales Datenmodell}
 
  = Auf den Arbeiten von Edgar F. Codd von 1970 basierendes Datenmodell, mit dem Beziehungen zwischen Daten in Form von Relationen beschrieben werden. 
 
-In einfachen Worten: Ein relationales Datenmodell ist eine Ansammlung von Tabellen, die miteinander verknüpft sind.
-Das relationale Datenmodell ist das am weitesten verbreitete Datenmodell, welches in der Datenbankentwicklung als Standard genutzt wird. Das Fundament des Datenbankmodells besteht aus drei Elementen: Tabellen, Attributen und Beziehungen.
+Im relationalen Modell werden:
+\begin{itemize}
+    \item Relationen als flache Tabellen abgebildet
+    \item Datenobjekte als Zeilen abgebildet
+    \item gespeicherte Daten durch Operationen Mengenorientiert verknüpft und verarbeitet
+\end{itemize}
 
-\paragraph{Vorteile:} sehr einfach und flexibel zu erstellen, hohe Flexibilität, leichte Handhabung
-\paragraph{Nachteil:} Effizienzprobleme bei großem Datenvolumen
+\subsubsection{}{Vorteile:} sehr einfach und flexibel zu erstellen, hohe Flexibilität, leichte Handhabung
+\subsubsection{Nachteil:} Effizienzprobleme bei großem Datenvolumen
 
 Die wichtigsten Operationen mit Relationen (relationale Algebra), die ein Datenbankmanagementsystem zur Verfügung stellen muss, sind folgende:
 
@@ -91,15 +165,14 @@ Als Entität wird in der Datenmodellierung ein eindeutig zu bestimmendes Objekt 
 
 \subsubsection{Attribute in einer Entität}
 
-Jede Entität besitzt eine bestimmbare Anzahl an Attributen (Ausprägungen bzw. Eigenschaften), die sich eindeutig von anderen Entitäten des gleichen Entitätstyps abgrenzen. Eine Eigenschaft ist ein konkreter Attributwert, den ein zuvor definiertes Attribut annehmen kann. Die Attribute stellen einen „Bauplan“ dar, der eine abstrakte Abbildung der Wirklichkeit ist.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.4\textwidth]{Content/images/modellierung/entity.png}
+\begin{wrapfigure}{r}{0.3\textwidth}
+    \begin{center}
+        \includegraphics[width=.28\textwidth]{Content/images/modellierung/entity.png}
+    \end{center}
     \caption{Attribute einer Entity}
     \label{fig:modellierung:entity}
- \end{figure}
-
+\end{wrapfigure}
+Jede Entität besitzt eine bestimmbare Anzahl an Attributen (Ausprägungen bzw. Eigenschaften), die sich eindeutig von anderen Entitäten des gleichen Entitätstyps abgrenzen. Eine Eigenschaft ist ein konkreter Attributwert, den ein zuvor definiertes Attribut annehmen kann. Die Attribute stellen einen „Bauplan“ dar, der eine abstrakte Abbildung der Wirklichkeit ist.
  Die Attribute in einer Entität können unterschiedlich aufgebaut sein. Man unterscheidet zwischen \emph{zusammengesetzte, mehrwertige und abgeleitete} Attribute.
 
  \paragraph{Zusammengesetzte Attribute} bestehen aus der Kombination mehrerer Attribute, die inhaltlich zusammengehören. Anhand einer Firmenadresse wird dies deutlich. Die Firmenadresse selbst ist ein Attribut der Firma, sie enthält aber die Attribute Straße, Hausnummer, Postleitzahl und Ort.
@@ -108,7 +181,7 @@ Jede Entität besitzt eine bestimmbare Anzahl an Attributen (Ausprägungen bzw. 
 
  \paragraph{Abgeleitete Attribute} werden aus anderen Attributen oder Entitäten berechnet. Bezogen auf eine Datenbank wäre das z.B. die Bildung einer Summe aus mehreren Spalten einer Tabelle.
 
- \subsection{Beziehungen in Datenbanken}
+ \subsection{Beziehungen im Relationalen Modell}
 
  Zwischen Relationen (Tabellen/Entitäten) können Beziehungen in einer Datenbank bestehen. Angenommen man hat eine Relation „Mutter“ und eine Relation „Kind“ – denkbar wären nun vier Möglichkeiten von Assoziationen/Beziehungen zwischen den Tabellen.
 
@@ -121,50 +194,61 @@ Jede Entität besitzt eine bestimmbare Anzahl an Attributen (Ausprägungen bzw. 
      \item Jede Mutter hat eine kein, ein, oder eine beliebige Anzahl von Kindern (mc)
  \end{itemize}
 
- \subsection{Kardinalität}
+ \subsection{Kardinalität - Funktionalitäten der Beziehungen}
 
- Die Kardinalität zwischen dem Entitätstyp 1 und dem Entitätstyp 2 gibt an, wie viele Entitäten des Entitätstyps 2 höchstens mit einer Entität des Entitätstyps 1 in Beziehung stehen. Die Kardinalität von Beziehungen ist in relationalen Datenbanken in folgenden Formen vorhanden: 
+ Die Kardinalität zwischen dem Entitätstyp E1 und dem Entitätstyp E2 gibt an, wie viele Entitäten des Entitätstyps 2 höchstens mit einer Entität des Entitätstyps 1 in Beziehung stehen. Die Kardinalität von Beziehungen ist in relationalen Datenbanken in folgenden Formen vorhanden: 
  1:1 Beziehung, 1:n Beziehung und m:n Beziehung. Des Weiteren gibt es noch die sogenannte \emph{Modifizierte Chen-Notation} (c).
  
  \subsubsection{1:1 Beziehung}
 
- In einer „eins zu eins“ Beziehung in relationalen Datenbanken ist jeder Datensatz in Tabelle A genau einem Datensatz in Tabelle B zugeordnet und umgekehrt. Diese Art von Beziehung sollte in der Modellierung vermieden werden, weil die meisten Informationen, die auf diese Weise in Beziehung stehen, sich in einer Tabelle befinden können. Eine 1:1 Beziehung verwendet man nur, um eine Tabelle aufgrund ihrer Komplexität zu teilen oder um einen Teil der Tabelle aus Gründen der Zugriffsrechte zu isolieren.
+ Jedem Entity aus einer Entitymenge E1 ist maximal ein Entity aus E2 zugewiesen
 
- \begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/11.png}
-    \caption{Eine Klasse hat einen Klassenvorstand. Ein Klassenvorstand hat eine Klasse}
-    \label{fig:modellierung:11}
- \end{figure}
+Diese Art von Beziehung sollte in der Modellierung vermieden werden, weil die meisten Informationen, die auf diese Weise in Beziehung stehen, sich in einer Tabelle befinden können. Eine 1:1 Beziehung verwendet man nur, um eine Tabelle aufgrund ihrer Komplexität zu teilen oder um einen Teil der Tabelle aus Gründen der Zugriffsrechte zu isolieren.
+
+%  \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=.8\textwidth]{Content/images/modellierung/11.png}
+%     \caption{Eine Klasse hat einen Klassenvorstand. Ein Klassenvorstand hat eine Klasse}
+%     \label{fig:modellierung:11}
+%  \end{figure}
 
  \subsubsection{1:n Beziehung}
 
- Eine „eins zu viele“ Beziehung in relationalen Datenbanken ist der häufigste Beziehungstyp in einer Datenbank. In einer 1:n Beziehung können einem Datensatz in Tabelle A mehrere passende Datensätze in Tabelle B zugeordnet sein, aber einem Datensatz in Tabelle B ist nie mehr als ein Datensatz in Tabelle A zugeordnet. Eine 1:n Beziehung wird mit einem Fremdschlüssel aufgelöst.
-Als Fremdschlüssel in der abhängigen Relation (n-Seite) wird der Primärschlüssel der unabhängigen Relation (1-Seite) eingefügt. Er verweist daher auf eine Zeile in dieser Relation.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/1n.png}
+ \begin{wrapfigure}{r}{0.4\textwidth}
+    \begin{center}
+        \includegraphics[width=.38\textwidth]{Content/images/modellierung/1n.png}
+    \end{center}
     \caption{Eine Klasse hat mehrere Schüler. Ein Schüler besucht 1 Klasse}
     \label{fig:modellierung:1n}
- \end{figure}
+\end{wrapfigure}
+Jedem Entity e1 aus einer Entitymenge E1 können beliebig viele Entities aus einer anderen Entitymenge E2 zugeordnet werden.
+
+Jedem Entity aus der Entitymenge E2 ist maximal 1 Entity aus E1 zugeordnet.
+Es kann auch Entities ohne Partner geben.
+
+Eine 1:n Beziehung wird mit einem Fremdschlüssel aufgelöst.
+Als Fremdschlüssel in der abhängigen Relation (n-Seite) wird der Primärschlüssel der unabhängigen Relation (1-Seite) eingefügt. Er verweist daher auf eine Zeile in dieser Relation.
 
  \subsubsection{m:n Beziehung}
 
  Bei „viele zu viele“ Beziehung in relationalen Datenbanken können jedem Datensatz in Tabelle A mehrere passende Datensätze in Tabelle B zugeordnet sein und umgekehrt. Diese Beziehungen können nur über eine dritte Tabelle, eine Verbindungstabelle C, realisiert werden. Die Verbindungstabelle C enthält die beiden Primärschlüssel der Tabellen A und B als Fremdschlüssel. Der Primärschlüssel der Verbindungstabelle wird aus diesen beiden Fremdschlüsseln gebildet. Daraus folgt, dass eine m:n Beziehung in Wirklichkeit zwei 1:n Beziehungen sind.
 
-\begin{figure}[H]
+ \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/mn.png}
-    \caption{Eine Klasse wird von mehreren Lehrern unterrichtet. Ein Lehrer unterrichtet mehrere Klassen.}
-    \label{fig:modellierung:mn}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/autorbuch.png}
-    \caption{Verbindungstabelle zwischen Autor und Buch}
-    \label{fig:modellierung:mn}
+    \subfloat[Eine Klasse wird von mehreren Lehrern unterrichtet. Ein Lehrer unterrichtet mehrere Klassen]{
+        {
+            \includegraphics[width=.38\textwidth]{Content/images/modellierung/mn.png}
+            \label{fig:modellierung:mn}
+        }
+    }
+    \subfloat[Verbindungstabelle zwischen Autor und Buch]{
+        {
+            \includegraphics[width=.38\textwidth]{Content/images/modellierung/autorbuch.png}
+            \label{fig:modellierung:mn}
+        }
+    }
+    \caption{Grafiken zu den Datenmodellen}
+    \label{fig:modellierung:models}
 \end{figure}
 
 \subsubsection{Conditional c}
@@ -187,7 +271,7 @@ Das relationale Datenmodell erhält man, indem man das hierarchische Datenmodell
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/biblio.png}
+    \includegraphics[width=.38\textwidth]{Content/images/modellierung/biblio.png}
     \caption{}
     \label{fig:modellierung:biblio}
 \end{figure}
@@ -217,73 +301,27 @@ Gibt es in einer Tabelle keine eindeutigen Spalten bzw. Kombinationen aus Spalte
 
 \subsubsection{Foreign Key}
 
-Der Fremdschlüssel kann Bestandteil einer Tabelle in einer relationalen Datenbank sein. Dabei handelt es sich um eine Schlüsselspalte, die auf einen Primärschlüssel einer anderen oder aber derselben Tabelle verweist. In einfachen Worten: Als Fremdschlüssel wird eine Menge von Attributen bezeichnet, die in einer anderen Tabelle den Primärschlüssel bildet. 1:n Beziehungen werden beispielsweise mit einem Fremdschlüssel aufgelöst. 
+Fremdschlüssel = Schlüsselattribute fremder Entitytypen in einer Relation
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/foreignkey.png}
+    \includegraphics[width=.3\textwidth]{Content/images/modellierung/foreignkey.png}
     \caption{Foreign Key}
     \label{fig:modellierung:foreignkey}
 \end{figure}
 
-\subsection{Objekt-Datenmodell}
+\subsection{Überleitung eines ERM’s in ein relationales Modell}
 
-Objekte sind modellhafte Abbilder der Wirklichkeit. Das Objekt-Datenmodell wird vor allem im Bereich der Softwareentwicklung eingesetzt. Ein wichtiges Prinzip beim Objektmodell ist die Vererbung, durch die ein effizienteres Programmieren möglich wird.
+Ausgangspunkt ist ein vollständiges ER Modell. Ziel ist die Darstellung des Sachverhaltes in Form von Relationen (Tabellen). Eine Tabelle ist eine Menge von Tupeln; ein Tupel ist eine Liste von Werten und entspricht einer Tabellenzeile.
 
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/objekt.png}
-    \caption{Vererbung bei Objekten}
-    \label{fig:modellierung:objekt}
-\end{figure}
+Grundsätzlich werden einfach alle Entitytypen und Beziehungstypen in eigenen Relationen abgebildet.
 
-\section{Entity-Relationship-Modell}
-
-Die Modellierung relationaler Datenbanken erfolgt mit dem von Peter Chen entwickelten Entity-Relationship-Modell. Bevor mittels SQL angefangen wird, Tabellen und Beziehungen anzulegen, wird zuerst geplant, wie die Datenbankstruktur funktionieren und aufgebaut werden soll. Der Einsatz von ER-Modellen ist in der Praxis ein gängiger Standard für die Datenmodellierung, auch wenn es unterschiedliche grafische Darstellungsformen von Datenbankmodellen gibt.
-Mithilfe des Entity-Relationship-Modells soll eine Typisierung von Objekten, ihrer relationalen Beziehungen untereinander und der zu überführenden Attribute, stattfinden.
-
-\paragraph{Bestandteile des ERD}
-\begin{itemize}
-    \item \textbf{Entität:} Ein individuell identifizierbares Objekt der Wirklichkeit.
-    \item \textbf{Beziehung}: Eine Verknüpfung / Zusammenhang zwischen zwei oder mehreren Entitäten.
-    \item \textbf{Attribut:} Eine Eigenschaft, die im Kontext zu einer Entität steht.
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/erd.png}
-    \caption{UML Darstellung}
-    \label{fig:modellierung:erd}
-\end{figure}
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/erde.png}
-    \caption{Was ist was}
-    \label{fig:modellierung:erde}
-\end{figure}
-
-\textit{Beispiel}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/bsp.png}
-    \caption{Beispiel Darstellung}
-    \label{fig:modellierung:bsp}
-\end{figure}
-\textit{Erklärung:}
-Ein Mitarbeiter hat einen Namen. Ein Projekt hat einen Namen, ein Datum und ein Budget. Ein Mitarbeiter kann mehrere Projekte leiten, aber ein Projekt kann nur von einem Mitarbeiter geleitet werden. 
-Zur Wiederholung: Diese Notation nennt man Chen-Notation und ist ein gängiger Standard in der Praxis der Datenmodellierung.
-
-\subsection{Überleitung eines ERD’s in ein relationales Modell}
-
-Ausgangspunkt ist ein vollständiges ER-Diagramm. Ziel ist die Darstellung des Sachverhaltes in Form von Relationen (Tabellen). Eine Tabelle ist eine Menge von Tupeln; ein Tupel ist eine Liste von Werten und entspricht einer Tabellenzeile.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/erdtor.png}
-    \caption{ERD zu Relational}
-    \label{fig:modellierung:erdtor}
-\end{figure}
+% \begin{figure}[H]
+%     \centering
+%     \includegraphics[width=.8\textwidth]{Content/images/modellierung/erdtor.png}
+%     \caption{ERD zu Relational}
+%     \label{fig:modellierung:erdtor}
+% \end{figure}
 
 \begin{center}
     \begin{tabular}{ | l | p{0.6\textwidth} |}
@@ -300,88 +338,33 @@ Ausgangspunkt ist ein vollständiges ER-Diagramm. Ziel ist die Darstellung des S
     \end{tabular}
 \end{center}
 
-\begin{center}
-    \begin{tabular}{ | p{0.3\textwidth} | p{0.7\textwidth} | }
-        \hline
-        1. Jede Entitätsmenge wird als Tabelle mit einem Primärschlüssel dargestellt & Strukturregel 1 (SR1): Bei der Darstellung von Entitätsmengen durch Relationen muss für jede Relation ein Primärschlüssel existieren \\ \hline     
-        2. 1:n Beziehungen werden Fremdschlüssel & Als Fremdschlüssel in der abhängigen Relation (n-Seite) wird der Primärschlüssel der unabhängigen Relation (1-Seite) eingefügt. 
-        Er verweist daher auf eine Zeile in dieser Relation.
-        (ähnlich einem Pointer oder einem Link) \\ \hline
-        3. m:n Beziehungen werden assoziative Tabellen & Die neu gebildete assoziative Relation enthält die Primärschlüssel der beiden in Beziehung stehenden Relationen. Sie erhält ihren Primärschlüssel entweder direkt als Kombination der beiden Fremdschlüssel oder es wird („künstlich“) ein neuer Primärschlüssel zugeteilt; die beiden Fremdschlüssel werden dann als Nichtschlüsselattribute verwendet. \\ \hline
-        4. Eigenschaften werden Spalten & Alle Eigenschaften werden als Attribute abgebildet. Die Eigenschaftswerte finden sich dann in der Spalte „darunter“. \\ \hline
-        5. Jede Beziehung wird zu einem Fremdschlüssel & Auch 1:1 – Beziehungen und insbesondere rekursive Beziehungen werden als Fremdschlüssel abgebildet. \\ \hline
-        6. Normalisierung & Prof. Kainerstorfer um Skript bitten (1.4) \\ \hline
-        7. Aggregation & Prof. Kainerstorfer um Skript bitten (1.4) \\ \hline
-    \end{tabular}
-\end{center}
+\subsubsection{Darstellung von Beziehungen}
 
-\subsection{Kochrezept - Auflösung m:n Beziehungen}
+Im Initialentwurf wird für jeden Beziehungstyp eine eigene Relation definiert.
+1:1 Relationen und 1:n Relationen können in der Verfeinerung zusammengefasst werden. 
 
-Im ERD können m:n - Beziehungen vorkommen, diese müssen jedoch spätestens bei der Überleitung in das Relationale Modell aufgelöst werden. Grund: Die Abbildung durch eine Menge von Fremdschlüsseln widerspricht der Forderung nach skalaren Attributen.
-Diese Auflösung erfolgt durch die Einführung einer neuen, sogenannten assoziativen Tabelle, die die Fremdschlüssel der beiden in Beziehung stehenden Entitäten enthält. (siehe \ref{fig:modellierung:mitproj})
+Im Initialentwurf enthält eine Relation alle Schlüsselattribute seiner Entitytypen und zusätzliche Attribute die der Relation zugeordnet wurden
+
+\subsubsection{Schemaverfeinerung}
+
+Relationen die 1:1 und 1:N Beziehungstypen repräsentieren können eliminiert werden, indem sie zusammengefasst werden. Nach der Verfeinerung enthält die Relation R1 den Schlüssel einer anderen Relation um den Beziehungstyp abzubilden.
+
+\subsection{Objekt-Datenmodell}
+
+Objekte sind modellhafte Abbilder der Wirklichkeit. Das Objekt-Datenmodell wird vor allem im Bereich der Softwareentwicklung eingesetzt. Ein wichtiges Prinzip beim Objektmodell ist die Vererbung, durch die ein effizienteres Programmieren möglich wird.
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.3\textwidth]{Content/images/modellierung/mitarbeiterprojekt.png}
-    \caption{Beispiel}
-    \label{fig:modellierung:mitproj}
-\end{figure}
-
-Würde man nach der Methode der Überleitung für 1:n - Beziehungen vorgehen, so würde man eine der beiden Lösungen erhalten: (siehe \ref{fig:modellierung:mitproj2})
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/mitproj.png}
-    \caption{Beispiel}
-    \label{fig:modellierung:mitproj2}
-\end{figure}
-
-Das neue „Attribut“ Mitarbeiter.Projekte müsste alle jene ProjektId’s aufnehmen, an denen der Mitarbeiter arbeitet – und umgekehrt für Projekt.Mitarbeiter. Weil das aber jeweils ganze Mengen sind, und solche Konstrukte in Relationalen Modell nicht definiert sind, führt man eine sogenannte assoziative Relation ein – also eine Relation, die eine Assoziation darstellt. (siehe \ref{fig:modellierung:mitproj3})
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.3\textwidth]{Content/images/modellierung/mitproj3.png}
-    \caption{Beispiel}
-    \label{fig:modellierung:mitproj3}
-\end{figure}
-
-Die Relation Arbeit enthält dann die Fremdschlüssel von Mitarbeiter und Projekt – diese können auch gleichzeitig die Primärschlüssel der neu gebildeten Relation sein (muss aber nicht): (siehe \ref{fig:modellierung:mitproj4})
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/mitproj4.png}
-    \caption{Beispiel}
-    \label{fig:modellierung:mitproj4}
+    \includegraphics[width=.4\textwidth]{Content/images/modellierung/objekt.png}
+    \caption{Vererbung bei Objekten}
+    \label{fig:modellierung:objekt}
 \end{figure}
 
 \section{Aggregation}
 
-Eine Aggregatfunktion ist eine Funktion, die gewisse Eigenschaften von Daten zusammenfasst.
-Man unterscheidet:
-
-\begin{itemize}
-    \item Distributive Funktionen
-    \begin{itemize}
-        \item Summe (SUM)
-        \item Anzahl (COUNT)
-        \item Maximum (MAX)
-        \item Minimum (MIN)
-    \end{itemize}
-    \item Algebraische Funktionen
-    \begin{itemize}
-        \item Mittelwert (AVG)
-    \end{itemize}
-    \item weitere Funktionen
-    \begin{itemize}
-        \item Standardabweichung (StDev)
-        \item Standardabweichung für die Grundgesamtheit (StDevP)
-        \item Median
-    \end{itemize}
-\end{itemize}
-
 \subsection{„is-part-of“-Beziehung (ERM)}
 
-Eine andere Verwendung des Begriffs Aggregation ist auch beim Entity-Relationship-Modell zu finden. So können hier mehrere Einzelobjekte logisch zu einem Gesamtobjekt zusammengefasst werden. Dies geschieht mit der „is-part-of“-Beziehung.
+Bei der Aggregation werden Unterschiedliche Entitytypen, die in ihrer Gesamtheit einen Objekttypen bilden, einander zugeordnet.
 
 Werden mehrere Einzelobjekte (z.B. Person und Hotel) zu einem eigenständigen Einzelobjekt (z.B. Reservierung) zusammengefasst, dann spricht man von Aggregation. Dabei wird das übergeordnet eigenständige Ganze Aggregat genannt. Die Teile, aus denen es sich zusammensetzt, heißen Komponenten. Aggregat und Komponenten werden als Entitätstyp deklariert.
 
@@ -399,53 +382,28 @@ Beispiel:
  	und in anderer Leserichtung: \newline
 \textit{Fußballmannschaft besteht-aus (mehreren, N) Fußballspielern.}
 
-\textit{Generalisierung / Spezialisierung}
+\section{Generalisierung / Spezialisierung}
 
-Zur weiteren Strukturierung der Entitätstypen wird die Generalisierung eingesetzt. Hierbei werden Eigenschaften von ähnlichen Entitätstypen einem gemeinsamen Obertyp, auch „Superentität“ genannt, zugeordnet. 
+\textbf{Eigenschaften von Entitytypen mit ähnlichen Attributen und Beziehungen werden herausfaktorisiert und einem gemeinsamen Obertyp zugeordnet.}
 
 Bei diesem Modellierungs-Konstrukt werden gemeinsame Eigenschaften von Entitäten nur einmal modelliert.
 
-\begin{itemize}
-    \item Der Generalisierungstyp enthält die Attribute, die alle Entitäten gemeinsam haben.
-    \item Die Spezialisierungstypen enthalten die speziell für sie zutreffenden Attribute, wobei
-    \begin{itemize}
-        \item die Spezialisierung disjunkt (=getrennt) oder überlappend sein kann
-        \item die Eigenschaften der Generalisierung erbt
-    \end{itemize}
-\end{itemize}
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/general.png}
-    \caption{Generalisierung und Spezialisierung}
-    \label{fig:modellierung:general}
-\end{figure}
+Die Generalisierung ist Teil des konzeptionellen Entwurfs. Weiters ist sie eine Abstraktion auf Typebene. Die Untertypen sind eine Spezialisierung des Obertyps. Die \textbf{Vererbung} ist ein Schlüsselkonzept der Generalisierung, da ein Untertyp alle Eigenschaften des Obertyps erbt.
 
 Diese Beziehungstypen werden durch „is-a“ | „can-be“ beschrieben.
 
-Beispiel:
+\subsection{Im Relationalen Modell}
+
+Sowohl der Obertyp als auch die Untertypen haben eine eigene Relation. Die Informationen einer Entity werden also in unterschiedlichen Relationen gespeichert. Streng genommen ist die Vererbung im relationalen Modell nicht realisiert, da in einer Spezialisierung nicht die vollständige Information verfügbar ist.
+
+\subsection{Beispiel:}
 \textit{Flugreise is-a Reise} \newline
  	und in anderer Leserichtung: \newline
 \textit{Reise can-be Flugreise}
 
+\subsection{Verdeutlichung des Unterschieds Generalisierung / Spezialisierung}
+
 Während Spezialisierungen durch Bildung von Teil-Entitätsmengen aus gegebenen Entitäten entstehen, werden bei der Generalisierung gemeinsame Eigenschaften und Beziehungen, die in verschiedenen Entitätstypen vorkommen, zu einem neuen Entitätstyp zusammengefasst. So können z.B. Kunden und Lieferanten zusätzlich zu Geschäftspartnern zusammengeführt werden, da Name, Anschrift, Bankverbindung etc. sowohl bei den Kunden als auch bei den Lieferanten vorkommen.
-
-\section{Unterschied Aggregation und Generalisierung/Spezialisierung}
-
-Generalisierung: bottom-up. \newline
-Spezialisierung: top-down.
-
-Bei einer Aggregation werden die Beziehungen zwischen 2 Entitäten (von außen) als eine einzige Entität gesehen, es können jedoch beide Entitäten eigenständig ohne der anderen existieren. 
-Beispiel: 
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/spez.png}
-    \caption{Generalisierung und Spezialisierung}
-    \label{fig:modellierung:special}
-\end{figure}
-
-Bei einer Aggregation gibt es KEINE VERERBUNG, bei der Generalisierung/Spezialisierung schon.
 
 \section{Data Dictionary}
 
@@ -455,7 +413,7 @@ Bei einer relationalen Datenbank ist ein Datenwörterbuch eine Menge von Tabelle
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/data.png}
+    \includegraphics[width=.4\textwidth]{Content/images/modellierung/data.png}
     \caption{}
     \label{fig:modellierung:data}
 \end{figure}
@@ -500,7 +458,7 @@ Die Dimensionen (engl. Dimensions) in einem Star-Schema ermöglichen unterschied
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/star.png}
+    \includegraphics[width=.4\textwidth]{Content/images/modellierung/star.png}
     \caption{Aufbau}
     \label{fig:modellierung:star}
 \end{figure}
@@ -536,7 +494,7 @@ Das Star-Schema setzt sich aus Fakten- und Dimensionstabellen zusammen. Die Fakt
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/star2.png}
+    \includegraphics[width=.4\textwidth]{Content/images/modellierung/star2.png}
     \caption{Beispiel}
     \label{fig:modellierung:star2}
 \end{figure}
@@ -549,7 +507,7 @@ Dadurch steigt die Anzahl von SQL Joins beim Schneeflockenschema im Gegensatz zu
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/snow.png}
+    \includegraphics[width=.4\textwidth]{Content/images/modellierung/snow.png}
     \caption{Aufbau Snowflake Schema}
     \label{fig:modellierung:snow}
 \end{figure}
@@ -590,7 +548,7 @@ Jede weitere Hierarchiestufe wird in einer eigenen Tabelle angelegt und mittels 
 
 \begin{figure}[H]
     \centering
-    \includegraphics[width=.8\textwidth]{Content/images/modellierung/starb.png}
+    \includegraphics[width=.4\textwidth]{Content/images/modellierung/starb.png}
     \caption{Beispiel Snowflake}
     \label{fig:modellierung:starb}
 \end{figure}
